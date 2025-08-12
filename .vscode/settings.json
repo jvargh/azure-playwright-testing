@@ -1,0 +1,11 @@
+{
+    // Clear the pinned default app so you'll be prompted to select/create a new one on deploy
+    // "appService.defaultWebAppToDeploy": "",
+    // Point deployment to the current app folder
+    "appService.deploySubpath": "src",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.showBuildDuringDeployPrompt": false
+}
