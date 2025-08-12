@@ -1,0 +1,159 @@
+<html>
+<head>
+<meta charset="utf-8" />
+<title>From Local to Cloud: Playwright on localhost, Azure App Service, and Azure Playwright Workspace</title>
+<style>
+  body { font-family: Calibri, Arial, sans-serif; line-height: 1.35; }
+  h1, h2, h3 { color: #222; }
+  code { background: #f5f5f5; padding: 2px 4px; }
+  pre { background: #f5f5f5; padding: 8px; white-space: pre-wrap; }
+  ul { margin-top: 0; }
+</style>
+</head>
+<body>
+<h1>From Local to Cloud: Playwright on localhost, Azure App Service, and Azure Playwright Workspace</h1>
+<p>This guide shows how to:</p>
+<ul>
+  <li>Run Playwright locally with an auto-started dev server.</li>
+  <li>Point tests at a deployed Azure Web App.</li>
+  <li>Publish runs to an Azure Playwright Workspace (with optional cloud-hosted browsers).</li>
+</ul>
+<p>It references the exact configuration files and provides Windows cmd commands and ready-to-use npm scripts.</p>
+
+<h2>Application Under Test (src/)</h2>
+<ul>
+  <li>Stack: Node + Express (ESM).</li>
+  <li>Entry: <code>src/server.js</code>
+    <ul>
+      <li>Listens on <code>process.env.PORT || 3000</code> (Azure-ready).</li>
+      <li>Routes:<br/>
+        <strong>GET /</strong> → simple “Welcome” page.<br/>
+        <strong>GET /todomvc</strong> → minimal TodoMVC-like page (localStorage-backed) used by demo tests.
+      </li>
+    </ul>
+  </li>
+  <li><code>src/package.json</code>
+    <ul>
+      <li><code>"main": "server.js"</code></li>
+      <li><code>"scripts": { "start": "node server.js" }</code></li>
+      <li>Dependency: <code>express</code></li>
+    </ul>
+  </li>
+</ul>
+
+<h2>Config files used</h2>
+<ul>
+  <li><code>playwright.config.ts</code> (base): General settings and default reporters/projects. Override <code>baseURL</code> per run via <code>BASE_URL</code>.</li>
+  <li><code>playwright.local.config.ts</code> (local dev, auto server): Uses <code>webServer</code> to start the app and targets <code>http://localhost:3000</code>.<br/>Updated: <code>webServer.command</code> now runs <code>node ./src/server.js</code>.</li>
+  <li><code>playwright.service.config.ts</code> (Azure Playwright Workspace): Uses <code>@azure/playwright</code> + <code>DefaultAzureCredential</code> and publishes runs to your workspace.</li>
+</ul>
+
+<h2>npm scripts (new)</h2>
+<ul>
+  <li><strong>start:src</strong>: start the local server</li>
+  <li><strong>test:local</strong>: run locally using <code>playwright.local.config.ts</code></li>
+  <li><strong>test:azure</strong>: run against your Azure Web App URL</li>
+  <li><strong>test:workspace</strong>: publish runs to your workspace</li>
+  <li><strong>test:workspace:scale</strong>: same as above with more workers</li>
+</ul>
+<pre>
+start:src → node ./src/server.js
+
+# Local
+npm run test:local
+
+# Azure Web App
+npm run test:azure
+
+# Workspace (after az login)
+npm run test:workspace
+
+# Workspace scaled (after az login)
+npm run test:workspace:scale
+</pre>
+
+<h2>npm run ↔ npx mapping</h2>
+<ul>
+  <li><code>npm run start:src</code> → <code>node ./src/server.js</code></li>
+  <li><code>npm test</code> → <code>npm run test:local</code> → <code>npx playwright test -c playwright.local.config.ts --reporter=line</code></li>
+  <li><code>npm run test:ui</code> → <code>npx playwright test</code></li>
+  <li><code>npm run test:local</code> → <code>npx playwright test -c playwright.local.config.ts --reporter=line</code></li>
+  <li><code>npm run test:local:ui</code> → <code>npx playwright test -c playwright.local.config.ts --ui</code></li>
+  <li><code>npm run test:azure</code> → <code>set BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net &amp;&amp; npx playwright test -c playwright.config.ts --reporter=line</code></li>
+  <li><code>npm run test:workspace</code> → <code>set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com &amp;&amp; npx playwright test -c playwright.service.config.ts --reporter=line</code></li>
+  <li><code>npm run test:workspace:scale</code> → <code>set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com &amp;&amp; npx playwright test -c playwright.service.config.ts --workers=20 --reporter=line</code></li>
+</ul>
+
+<h2>Local testing (playwright.local.config.ts)</h2>
+<p><em>What it does</em>: Starts the dev server for you and reuses it across runs; sets <code>baseURL</code> to <code>http://localhost:3000</code>.</p>
+<p><strong>Run (npm)</strong>:</p>
+<pre>
+npm run test:local
+</pre>
+<p><strong>Equivalent (npx)</strong>:</p>
+<pre>
+npx playwright test -c playwright.local.config.ts --reporter=line
+</pre>
+<p>Manual variant (start server yourself):</p>
+<pre>
+node .\src\server.js
+set BASE_URL=http://localhost:3000 && npx playwright test -c playwright.config.ts --reporter=line
+</pre>
+<p>Focused local test:</p>
+<pre>
+<!-- npm run has no built-in alias for a single-spec focused run; use npx form: -->
+npx playwright test -c playwright.local.config.ts tests-examples\demo-todo-app.spec.ts -g "should allow me to add todo items" --reporter=line
+</pre>
+
+<h2>Azure Web App testing (playwright.config.ts + BASE_URL)</h2>
+<p><em>What it does</em>: Reuses your base config but targets the live app via <code>BASE_URL</code>.</p>
+<p><strong>Run (npm)</strong>:</p>
+<pre>
+npm run test:azure
+</pre>
+<p><strong>Equivalent (npx)</strong>:</p>
+<pre>
+set BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net && npx playwright test -c playwright.config.ts --reporter=line
+</pre>
+<p><strong>Focused (npx)</strong>:</p>
+<pre>
+set BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net && npx playwright test -c playwright.config.ts tests-examples\demo-todo-app.spec.ts -g "should allow me to add todo items" --reporter=line
+</pre>
+
+<h2>Playwright Workspace (playwright.service.config.ts)</h2>
+<p><strong>Prereqs</strong></p>
+<pre>
+az login
+set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com
+</pre>
+<p><em>Publish runs to the Workspace</em>:</p>
+<p><strong>Run (npm)</strong>:</p>
+<pre>
+npm run test:workspace
+"</pre>
+<p><strong>Equivalent (npx)</strong>:</p>
+<pre>
+npx playwright test -c playwright.service.config.ts --reporter=line
+</pre>
+<p><em>Scale with cloud-hosted browsers</em>:</p>
+<p><strong>Run (npm)</strong>:</p>
+<pre>
+npm run test:workspace:scale
+</pre>
+<p><strong>Equivalent (npx)</strong>:</p>
+<pre>
+npx playwright test -c playwright.service.config.ts --workers=20 --reporter=line
+</pre>
+<p><em>Focused published run</em>:</p>
+<pre>
+set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts tests-examples\demo-todo-app.spec.ts -g "should allow me to add todo items" --reporter=line
+</pre>
+
+<h2>Tips</h2>
+<ul>
+  <li>Don’t quote env vars in cmd.exe (use <code>set FOO=https://...</code>, not <code>set FOO="https://..."</code>).</li>
+  <li>Use the region endpoint from Workspace → Get started (e.g., <code>https://eastus.api.playwright.microsoft.com</code>), not the long Dataplane URI.</li>
+  <li>Runs executed with <code>playwright.local.config.ts</code> or plain <code>playwright.config.ts</code> won’t appear in the Workspace unless you use <code>playwright.service.config.ts</code>.</li>
+</ul>
+</body>
+</html>
