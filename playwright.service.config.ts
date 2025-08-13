@@ -31,7 +31,7 @@ export default defineConfig({
   ...serviceConfig,
   use: {
     ...serviceConfig.use,
-    baseURL: 'https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net',
+    baseURL: 'https://<webapp-name>.centralus-01.azurewebsites.net',
     // keep your artifacts settings; these can also live in base config
     trace: 'on-first-retry',
     video: 'retain-on-failure',
