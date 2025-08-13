@@ -8,7 +8,7 @@
     "test:ui": "npx playwright test",
     "test:local": "npx playwright test -c playwright.local.config.ts",
     "test:local:ui": "npx playwright test -c playwright.local.config.ts --ui",
-    "test:azure": "cross-env BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net npx playwright test -c playwright.config.ts --reporter=line",
+    "test:azure": "cross-env BASE_URL=https://<webapp-name>.centralus-01.azurewebsites.net npx playwright test -c playwright.config.ts --reporter=line",
     "test:workspace": "cross-env PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com npx playwright test -c playwright.service.config.ts --reporter=line",
     "test:workspace:scale": "cross-env PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com npx playwright test -c playwright.service.config.ts --workers=20 --reporter=line"
   },
