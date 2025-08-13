@@ -69,21 +69,7 @@ Running 81 tests using 4 workers
 …
 ✓ 81 passed (45s)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+
 \u2713 81 passed (45s)
 ```
 
@@ -95,6 +81,12 @@ Listing tests:
   tests/example.spec.ts: 3 tests
   tests/todomvc.smoke.spec.ts: 15 tests
   tests-examples/demo-todo-app.spec.ts: 9 tests
+
+To open last HTML report run:
+  npx playwright show-report
+
+$  npx playwright show-report
+  Serving HTML report at http://localhost:9323. Press Ctrl+C to quit.
 ```
 
 ## Troubleshooting
