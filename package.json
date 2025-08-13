@@ -3,14 +3,14 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "test": "npm run test:local",
-  "start:src": "node ./src/server.js",
+    "test": "npm run test:local",
+    "start:src": "node ./server.js",
     "test:ui": "npx playwright test",
     "test:local": "npx playwright test -c playwright.local.config.ts",
     "test:local:ui": "npx playwright test -c playwright.local.config.ts --ui",
-  "test:azure": "set BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net && npx playwright test -c playwright.config.ts --reporter=line",
-  "test:workspace": "set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --reporter=line",
-  "test:workspace:scale": "set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --workers=20 --reporter=line"
+    "test:azure": "cross-env BASE_URL=https://nodewebapp1-asa6dyfec6hvcdc9.centralus-01.azurewebsites.net npx playwright test -c playwright.config.ts --reporter=line",
+    "test:workspace": "cross-env PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com npx playwright test -c playwright.service.config.ts --reporter=line",
+    "test:workspace:scale": "cross-env PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com npx playwright test -c playwright.service.config.ts --workers=20 --reporter=line"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +20,11 @@
     "@azure/identity": "^4.11.1",
     "@azure/playwright": "^1.0.0-beta.2",
     "@playwright/test": "^1.54.2",
-    "@types/node": "^24.2.1"
+    "@types/node": "^24.2.1",
+    "cross-env": "^10.0.0",
+    "dotenv": "^17.2.1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
   }
 }

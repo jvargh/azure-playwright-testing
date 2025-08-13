@@ -4,6 +4,20 @@ import { getServiceConfig, ServiceOS } from '@azure/playwright';
 import { DefaultAzureCredential } from '@azure/identity';
 import base from './playwright.config';
 
+// Debug: confirm env is visible when config loads
+// Remove after verifying
+console.log(`[debug] Initial PLAYWRIGHT_SERVICE_URL=${process.env.PLAYWRIGHT_SERVICE_URL || '<undefined>'}`);
+
+// Normalize and validate the service URL early to avoid shell quirks
+const candidate = (process.env.PLAYWRIGHT_SERVICE_URL || '').trim();
+const pattern = /^https:\/\/[a-z0-9-]+\.api\.playwright\.microsoft\.com$/i;
+if (!pattern.test(candidate)) {
+  console.error('[error] PLAYWRIGHT_SERVICE_URL is missing or invalid. Expected e.g. https://eastus.api.playwright.microsoft.com');
+} else {
+  process.env.PLAYWRIGHT_SERVICE_URL = candidate; // ensure normalized form
+}
+console.log(`[debug] Using PLAYWRIGHT_SERVICE_URL=${process.env.PLAYWRIGHT_SERVICE_URL || '<undefined>'}`);
+
 // Start from your base config and make it "service aware"
 const serviceConfig = getServiceConfig(base, {
   exposeNetwork: '<loopback>',

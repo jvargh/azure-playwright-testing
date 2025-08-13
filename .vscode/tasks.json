@@ -29,6 +29,86 @@
 			},
 			"isBackground": false,
 			"group": "build"
+		},
+		{
+			"label": "List Playwright Workspace Tests",
+			"type": "shell",
+			"command": "npm run test:workspace --silent -- --list",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run Playwright Workspace Full",
+			"type": "shell",
+			"command": "npm run test:workspace",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Probe Workspace eastus",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --list --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Probe Workspace centralus",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://centralus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --list --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Probe Workspace eastus2",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://eastus2.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --list --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run Workspace Full (eastus)",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://eastus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run Workspace Full (centralus)",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://centralus.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run Workspace Full (eastus2)",
+			"type": "shell",
+			"command": "set PLAYWRIGHT_SERVICE_URL=https://eastus2.api.playwright.microsoft.com && npx playwright test -c playwright.service.config.ts --reporter=line",
+			"isBackground": false,
+			"problemMatcher": [
+				"$eslint-stylish"
+			],
+			"group": "build"
 		}
 	]
 }

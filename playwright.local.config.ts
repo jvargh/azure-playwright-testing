@@ -8,7 +8,7 @@ export default defineConfig({
     baseURL: 'http://localhost:3000',
   },
   webServer: {
-    command: 'node ./src/server.js',
+  command: 'node ./server.js',
       url: 'http://localhost:3000',
       reuseExistingServer: true,
       timeout: 30000
